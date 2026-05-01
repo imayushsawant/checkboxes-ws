@@ -1,0 +1,34 @@
+import http from "node:http"
+import path from "node:path"
+
+import express from 'express'
+import { Server } from "socket.io"
+
+
+ async function main(){
+    const PORT = process.env.PORT ?? 9090
+    const app = express()
+    const server = http.createServer(app)
+    app.use(express.static(path.resolve('./public')))
+    const io = new Server(server)
+
+    io.on('connection', (socket)=>{
+        console.log(`a new socket has been connected ${socket.id}`)
+        socket.on("client:checkbox-action", (data)=>{
+            console.log(`checkbox for ${data.id} id has been changed and its state is ${data.state}`)
+            socket.broadcast.emit('server:checkbox-action', data)
+        })
+    })
+
+
+
+
+    app.get(`/health`, (req, res)=>{
+       res.send({'health':true})
+    })
+    server.listen(PORT, ()=>{
+        console.log(`Server is running on http://localhost:${PORT}`)
+    })
+}
+
+main()

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-boxes</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>Check-boxes</h1>
+    <div id="container">
+         
+        <script>
+            const socket = io();
+            const container = document.getElementById("container")
+            for (let index = 0; index < 200; index++) {
+                const ticks = document.createElement('input')
+                ticks.type='checkbox'
+                ticks.className='checkbox'
+                ticks.id = `${index}`
+                container.append(ticks)    
+            }
+            const checkboxes = document.querySelectorAll('.checkbox');
+            checkboxes.forEach(element => {
+                element.addEventListener('change', ()=>{
+                        console.log(`checkbox with index ${element.id} has been affected and it is currently ${element.checked}`)
+                        socket.emit('client:checkbox-action', {'id':element.id, 'state': element.checked})
+                })
+            })
+            socket.on('server:checkbox-action', (data)=>{
+                const box = document.getElementById(data.id)
+                console.log("reached here")
+                if(data.state){
+                    box.checked = true
+                }
+                else{
+                    box.checked = false
+                }
+            })
+        </script>
+    </div>
+    
+</body>
+</html>
