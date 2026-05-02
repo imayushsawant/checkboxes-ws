@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap');
 
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #121212;
-    color: #e0e0e0;
+    font-family: 'Space Grotesk', sans-serif;
+    background-color: #050510;
+    color: #fff;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -12,33 +12,56 @@ body {
     margin: 0;
     box-sizing: border-box;
     overflow-x: hidden;
+    /* Static but deep and immersive atmospheric background */
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 0, 85, 0.15), transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(0, 255, 170, 0.15), transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(170, 0, 255, 0.1), transparent 60%);
+    background-attachment: fixed;
 }
 
 h1 {
-    color: #ffffff;
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #00ffaa; /* Cool neon cyan matching the checkboxes */
     margin-bottom: 2rem;
-    font-size: 2.5rem;
-    font-weight: 600;
-    letter-spacing: 1px;
+    text-shadow: 0px 0px 15px rgba(0, 255, 170, 0.5), 0px 0px 30px rgba(0, 255, 170, 0.3); /* Neon glow effect */
 }
 
 #container {
     display: flex;
     flex-wrap: wrap;
-    max-width: 65vw; /* Wider to accommodate more checkboxes nicely */
-    gap: 20px; /* Reduced gap to fit more densely */
-    background: #1e1e1e;
-    padding: 2rem;
-    border-radius: 12px;
-    border: 1px solid #333;
+    max-width: 60vw; /* Reduced max-width to limit ticks per line */
+    gap: 16px; /* Increased gap to spread them out */
+    padding: 2.5rem;
+    border-radius: 16px;
     justify-content: center;
+    
+    /* "Neon Border" trick that uses zero GPU-heavy animations */
+    background: rgba(10, 10, 18, 0.8);
+    border: 2px solid transparent;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: 
+        linear-gradient(to right, #0a0a12, #0a0a12), 
+        linear-gradient(135deg, #ff0055, #aa00ff, #00ffaa);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 }
 
-/* Highly performant native checkboxes adapted for dark mode */
+/* Native checkboxes styled via accent-color for max performance */
 input[type="checkbox"] {
-    width: 30px;
-    height: 30px;
+    width: 40px; /* Made the checkboxes much bigger */
+    height: 40px; /* Made the checkboxes much bigger */
     cursor: pointer;
-    accent-color: #bb86fc; /* Classy purple matching dark themes */
-    margin: 0; /* Tight spacing for extreme scales */
+    margin: 0;
+    accent-color: #00ffaa; /* Unified to a single cool cyan color */
+    /* Added crisp transition only on transform */
+    transition: transform 0.1s ease-out;
+}
+
+input[type="checkbox"]:hover {
+    transform: scale(1.2); /* Slightly reduced scale up so they don't overlap too intensely when big */
+    z-index: 10;
 }
