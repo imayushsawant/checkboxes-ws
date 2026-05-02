@@ -24,8 +24,15 @@ When one user toggles a checkbox, the change is instantly reflected for all othe
 4. Server broadcasts the update to all other clients  
 5. Other clients receive the event and update their UI accordingly  
 
-> Note: There is no persistent storage yet.  
-New users will not see previous checkbox states (this will be solved using Redis in the next iteration).
+> Note: There is no persistent database storage yet.  
+New users will see the current in-memory state fetched via an API upon load, but all states reset when the server restarts (this will be solved using Redis in the next iteration).
+
+---
+
+## ⚡ Performance
+
+- Uses a highly optimized, static native Dark Mode CSS theme.
+- Avoids expensive CSS transitions and pseudo-elements to ensure the browser can scale and render massive numbers of checkboxes (tested for scale up to 1 million).
 
 ---
 
@@ -65,8 +72,9 @@ pnpm install
 ### 2. Start the server
 
 ```
-node server.js
+node index.js
 ```
+*Or use `pnpm dev` if configured in package.json.*
 
 ### 3. Open in browser
 
@@ -80,8 +88,8 @@ Open multiple tabs to test real-time behavior.
 
 ## ⚠️ Current Limitations
 
-- No persistent state (refresh resets checkboxes)
-- No backend source of truth
+- State is only saved in-memory during the server's lifecycle (server restarts reset all checkboxes)
+- In-memory array might consume significant RAM if scaled up to 1 million checkboxes on the backend
 - No rate limiting or validation
 
 ---

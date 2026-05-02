@@ -14,20 +14,29 @@
         <script>
             const socket = io();
             const container = document.getElementById("container")
-            for (let index = 0; index < 200; index++) {
-                const ticks = document.createElement('input')
-                ticks.type='checkbox'
-                ticks.className='checkbox'
-                ticks.id = `${index}`
-                container.append(ticks)    
-            }
-            const checkboxes = document.querySelectorAll('.checkbox');
-            checkboxes.forEach(element => {
-                element.addEventListener('change', ()=>{
-                        console.log(`checkbox with index ${element.id} has been affected and it is currently ${element.checked}`)
-                        socket.emit('client:checkbox-action', {'id':element.id, 'state': element.checked})
-                })
+
+            window.addEventListener('load', async()=>{
+                const response = await fetch('/checkboxes', { method: 'GET' })
+                const data = await response.json()
+                if(data && data.checkboxes){
+                    data.checkboxes.forEach((checked, index)=>{ 
+
+                        const ticks = document.createElement('input')
+                        ticks.type='checkbox'
+                        ticks.className='checkbox'
+                        ticks.id = `${index}`
+                        ticks.checked = checked
+                        
+                        ticks.addEventListener('change', ()=>{
+                            console.log(`checkbox with index ${ticks.id} has been affected and it is currently ${ticks.checked}`)
+                            socket.emit('client:checkbox-action', {'id':ticks.id, 'state': ticks.checked})
+                        })
+                        container.append(ticks)     
+                    })
+                }
             })
+
+
             socket.on('server:checkbox-action', (data)=>{
                 const box = document.getElementById(data.id)
                 console.log("reached here")
