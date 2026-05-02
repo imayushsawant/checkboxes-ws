@@ -29,7 +29,7 @@
                         
                         ticks.addEventListener('change', ()=>{
                             console.log(`checkbox with index ${ticks.id} has been affected and it is currently ${ticks.checked}`)
-                            socket.emit('client:checkbox-action', {'id':ticks.id, 'state': ticks.checked})
+                            socket.emit('client:checkbox-action', {'id':ticks.id, 'isChecked': ticks.checked})
                         })
                         container.append(ticks)     
                     })
@@ -40,7 +40,7 @@
             socket.on('server:checkbox-action', (data)=>{
                 const box = document.getElementById(data.id)
                 console.log("reached here")
-                if(data.state){
+                if(data.isChecked){
                     box.checked = true
                 }
                 else{

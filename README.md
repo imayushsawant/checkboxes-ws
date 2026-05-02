@@ -10,7 +10,8 @@ When one user toggles a checkbox, the change is instantly reflected for all othe
 - Real-time synchronization using WebSockets (Socket.IO)
 - Dynamic generation of checkboxes (no hardcoding)
 - Event-driven architecture (client ↔ server communication)
-- Multi-client state updates (broadcasting changes)
+- **Redis Pub/Sub** for multi-server instance support (horizontal scaling)
+- **Persistent State** via Redis (states survive server restarts)
 
 ---
 
@@ -19,13 +20,14 @@ When one user toggles a checkbox, the change is instantly reflected for all othe
 1. User clicks a checkbox on the frontend  
 2. Frontend emits an event with:
    - checkbox `id`
-   - current `state` (checked/unchecked)  
+   - current state as `isChecked` (boolean)
 3. Server receives the event  
-4. Server broadcasts the update to all other clients  
-5. Other clients receive the event and update their UI accordingly  
+4. Server updates the unified state stored in **Redis**.
+5. Server publishes the event via Redis Pub/Sub so all server instances receive it.
+6. Servers broadcast the update to all connected clients  
+7. Other clients receive the event and update their UI accordingly  
 
-> Note: There is no persistent database storage yet.  
-New users will see the current in-memory state fetched via an API upon load, but all states reset when the server restarts (this will be solved using Redis in the next iteration).
+> Note: We are now using **Redis** for persistent storage and Pub/Sub. The state of checkboxes is preserved across server restarts, and the application now supports multiple server instances concurrently!
 
 ---
 
@@ -41,6 +43,7 @@ New users will see the current in-memory state fetched via an API upon load, but
 - Node.js
 - Express
 - Socket.IO
+- **Redis** (Storage & Pub/Sub)
 - Vanilla JavaScript (DOM manipulation)
 
 ---
@@ -69,12 +72,15 @@ project/
 pnpm install
 ```
 
-### 2. Start the server
+### 2. Start the server(s)
+
+You must have **Redis** running locally or accessible.
 
 ```
 node index.js
 ```
 *Or use `pnpm dev` if configured in package.json.*
+*You can spin up multiple servers on different ports using `$env:PORT=9100 node index.js`!*
 
 ### 3. Open in browser
 
@@ -88,17 +94,12 @@ Open multiple tabs to test real-time behavior.
 
 ## ⚠️ Current Limitations
 
-- State is only saved in-memory during the server's lifecycle (server restarts reset all checkboxes)
-- In-memory array might consume significant RAM if scaled up to 1 million checkboxes on the backend
-- No rate limiting or validation
+- No rate limiting or validation on incoming checkbox toggles.
 
 ---
 
 ## 🔮 Future Improvements
 
-- Add Redis as a source of truth
-- Persist checkbox states
-- Handle multiple server instances (Pub/Sub)
 - Add rate limiting to prevent abuse
 - Add authentication layer
 
